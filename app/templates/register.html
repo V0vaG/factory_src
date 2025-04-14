@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register {{ role|capitalize }}</title>
+
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #eef1f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        input[type="text"], input[type="password"], select {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Button Styling */
+        .button {
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 80%;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            background-color: #004494;
+            transform: translateY(0);
+        }
+
+        /* Back Button */
+        .back-button {
+            background-color: #dc3545;
+        }
+
+        .back-button:hover {
+            background-color: #b02a37;
+        }
+
+        /* Error message styling */
+        #passwordError {
+            color: red;
+            font-size: 14px;
+            display: none;
+            margin-top: 5px;
+        }
+    </style>
+
+    <script>
+        function checkPasswords() {
+            let password = document.getElementById("password").value;
+            let confirmPassword = document.getElementById("confirm_password").value;
+            let errorText = document.getElementById("passwordError");
+
+            if (password && confirmPassword) {
+                if (password !== confirmPassword) {
+                    errorText.style.display = "block";
+                } else {
+                    errorText.style.display = "none";
+                }
+            } else {
+                errorText.style.display = "none";
+            }
+        }
+
+        function validatePasswords() {
+            let password = document.getElementById("password").value;
+            let confirmPassword = document.getElementById("confirm_password").value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return false;  // Prevent form submission
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Register {{ role|capitalize }}</h2>
+        
+        <form action="{{ url_for('register', role=role) }}" method="POST" onsubmit="return validatePasswords()">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" id="password" name="password" placeholder="Password" required oninput="checkPasswords()">
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required oninput="checkPasswords()">
+            <span id="passwordError">Passwords do not match.</span>
+
+            {% if show_role_selection %}
+            <select name="role" required>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+            {% endif %}
+
+            <!-- Button Container -->
+            <div class="button-container">
+                <button type="submit" class="button">Register {{ role|capitalize }}</button>
+                <a href="{{ url_for('login') }}" class="button back-button">Go Back</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
