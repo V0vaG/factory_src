@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Service</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            padding: 30px;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: auto;
+        }
+        label, select, input {
+            margin: 10px 5px;
+            font-size: 1rem;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .button {
+            margin-top: 10px;
+            background-color: #4CAF50;
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Search for Factory Services</h2>
+        <form method="POST">
+            <label for="service">Service:</label>
+            <input list="services" name="service" required>
+            <datalist id="services">
+                {% for service in FACTORY_SERVICES %}
+                    <option value="{{ service }}">
+                {% endfor %}
+            </datalist>
+
+            {% for field in address_fields %}
+                <label>{{ field }}:</label>
+                <input type="text" name="{{ field }}" value="{{ filters.get(field, '') }}">
+            {% endfor %}
+            <button class="button" type="submit">Search</button>
+        </form>
+
+        {% if results %}
+        <h3>Results</h3>
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Factory Name</th>
+                <th>Address</th>
+                <th>Website</th>
+                <th>Email</th>
+                <th>Phone</th>
+            </tr>
+            {% for row in results %}
+            <tr>
+                <td>{{ row.user }}</td>
+                <td>{{ row.factory_name }}</td>
+                <td>{{ row.address }}</td>
+                <td>{{ row.website }}</td>
+                <td>{{ row.email }}</td>
+                <td>{{ row.phone }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+
+        <br>
+        <a href="{{ url_for('user_dashboard') }}" class="button">⬅ Back</a>
+    </div>
+</body>
+</html>

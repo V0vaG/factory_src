@@ -157,14 +157,39 @@
 <body>
     <div class="container">
         <h2>Welcome to the User Dashboard</h2>
+        <h3>Your Factories</h3>
+        {% if factories %}
+        <table>
+            <tr>
+                <th>Factory Name</th>
+                <th>Address</th>
+                <th>FACTORY_SERVICES</th>
+            </tr>
+            {% for name, factory in factories.items() %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>
+                    {{ factory.address.city }}, 
+                    {{ factory.address.country }}, {{ factory.address.street }},
+                    {{ factory.address.zip_code }}
+                </td>
+                <td>{{ factory.services | join(', ') }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No factories added yet.</p>
+        {% endif %}
 
     
+        <a href="{{ url_for('add_factory') }}" class="button">➕ Add Factory</a>
+        <a href="{{ url_for('search_service') }}" class="button">🔍 Search Service</a>
 
-        
-
+    
         <br>
         <a href="{{ url_for('logout') }}" class="button">Logout</a>
     </div>
+    
 
     <!-- Popup notification -->
     <div id="notificationPopup" class="popup">

@@ -157,6 +157,15 @@
         </form>
     </div>
 
+
+    
+    <!-- Register Button -->
+    <form action="{{ url_for('register', role='user') }}" method="get" style="width: 100%; margin-top: 10px;">
+        <button type="submit" class="button" style="background-color: #2196F3;">Register</button>
+    </form>
+    
+    
+
     <!-- Popup notification -->
     <div id="notificationPopup" class="popup">
         <span id="popupMessage"></span>

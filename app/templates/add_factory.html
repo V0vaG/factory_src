@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Factory</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+            width: 100%;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            text-align: left;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 12px;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .back {
+            margin-top: 10px;
+            text-align: center;
+            display: block;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<script>
+    function filterLines() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const items = document.querySelectorAll('#linesList label');
+        items.forEach(label => {
+            const text = label.textContent.toLowerCase();
+            label.style.display = text.includes(input) ? '' : 'none';
+        });
+    }
+    </script>
+    
+
+<body>
+    <div class="container">
+        <h2>Add Factory</h2>
+        <form method="POST">
+            <label for="factory_name">Factory Name:</label>
+            <input type="text" name="factory_name" required>
+
+            {% for field in address_fields %}
+                <label for="{{ field }}">{{ field.replace('_', ' ').capitalize() }}:</label>
+                <input type="text" name="{{ field }}" required>
+            {% endfor %}
+
+            <label for="FACTORY_SERVICES">Select Lines:</label>
+            <input type="text" id="searchInput" onkeyup="filterLines()" placeholder="Search lines..." style="width: 100%; padding: 8px; margin-bottom: 10px;">
+
+            <div id="linesList" style="text-align: left; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; border-radius: 8px; padding: 10px;">
+                {% for service in FACTORY_SERVICES %}
+                <label style="display: block;">
+                    <input type="checkbox" name="services" value="{{ service }}"> {{ service }}
+                </label>
+                {% endfor %}
+            </div>
+
+
+            <button type="submit" class="button">Save Factory</button>
+        </form>
+
+        <a href="{{ url_for('user_dashboard') }}" class="back">← Back to Dashboard</a>
+    </div>
+</body>
+</html>
