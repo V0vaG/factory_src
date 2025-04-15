@@ -238,15 +238,17 @@ def fix_user_data():
     users = load_users()
     changed = False
 
+    # Ensure users list has at least two entries
+    if len(users) < 2:
+        users = [{"root_user": "", "password_hash": ""}, {"users": []}]
+        changed = True
+
+    # Fix users inside second entry
     for user in users[1].get('users', []):
         for prop in USER_PROPERTIES:
             if prop not in user:
-                if prop == "factories":
-                    user[prop] = {}
-                else:
-                    user[prop] = ""
+                user[prop] = {} if prop == "factories" else ""
                 changed = True
-
             elif prop == "factories" and isinstance(user[prop], str):
                 user[prop] = {}
                 changed = True
