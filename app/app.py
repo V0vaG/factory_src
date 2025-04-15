@@ -25,7 +25,9 @@ FACTORY_SERVICES = ["cnc", "3d_print", "laser", "assembly", "painting", "welding
 os.makedirs(DATA_DIR, exist_ok=True)
 
 def is_root_registered():
-    return bool(get_root_user())
+    root = get_root_user()
+    return bool(root.get("root_user")) and bool(root.get("password_hash"))
+
 
 def load_users():
     if os.path.exists(USERS_FILE):
