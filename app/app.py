@@ -3,8 +3,13 @@ import json
 import os
 import requests
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+
 
 app = Flask(__name__)
+application = DispatcherMiddleware(Flask('dummy_app'), {
+    '/factory': app
+})
 app.config['SECRET_KEY'] = 'your_secret_key'
 
 # Set up paths
