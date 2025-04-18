@@ -123,7 +123,7 @@ def register(role):
                 return redirect(url_for('login'))
     return render_template('register.html', role=role)
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/factory/login', methods=['GET', 'POST'])
 def login():
     root_user = get_root_user()
     users = get_users()
