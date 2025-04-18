@@ -79,7 +79,7 @@ def remove_user(username):
     users[1]["users"] = [user for user in users[1].get("users", []) if user["user"] != username]
     save_users(users)
 
-@app.route('/')
+@app.route('/factory')
 def index():
     if not is_root_registered():
         return redirect(url_for('register', role='root'))
