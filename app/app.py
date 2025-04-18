@@ -3,13 +3,8 @@ import json
 import os
 import requests
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
-
-app = Flask(__name__, static_url_path='/factory/static', static_folder='static')
-application = DispatcherMiddleware(Flask('dummy_app'), {
-    '/factory': app
-})
+app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 
 # Set up paths
@@ -79,7 +74,7 @@ def remove_user(username):
     users[1]["users"] = [user for user in users[1].get("users", []) if user["user"] != username]
     save_users(users)
 
-@app.route('/factory')
+@app.route('/factory/')
 def index():
     if not is_root_registered():
         return redirect(url_for('register', role='root'))
@@ -267,5 +262,4 @@ def fix_user_data():
 fix_user_data()
 
 if __name__ == '__main__':
-    from werkzeug.serving import run_simple
-    run_simple('0.0.0.0', 5000, application, use_reloader=True, use_debugger=True)
+    app.run(debug=True, threaded=True)
