@@ -5,10 +5,14 @@ import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.serving import run_simple
 
 # Mount app at /factory
 app = Flask(__name__, static_url_path='/factory/static', static_folder='static')
+app.wsgi_app = ProxyFix(app.wsgi_app)
+app.config['APPLICATION_ROOT'] = '/factory'
+
 app.config['SECRET_KEY'] = 'your_secret_key'
 
 application = DispatcherMiddleware(Flask('dummy_app'), {
@@ -87,7 +91,7 @@ def remove_user(username):
 def index():
     if not is_root_registered():
         return redirect(url_for('register', role='root'))
-    return redirect(url_for('login'))
+    return redirect(url_for('login', _external=False))
 
 @app.route('/remove_user', methods=['POST'])
 def remove_user_route():
