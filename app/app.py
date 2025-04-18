@@ -267,4 +267,5 @@ def fix_user_data():
 fix_user_data()
 
 if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+    from werkzeug.serving import run_simple
+    run_simple('0.0.0.0', 5000, application, use_reloader=True, use_debugger=True)
