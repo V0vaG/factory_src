@@ -4,8 +4,35 @@ import os
 import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(__name__)
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.serving import run_simple
+
+# Mount app at /factory
+app = Flask(__name__, static_url_path='/factory/static', static_folder='static')
+class PrefixMiddleware(object):
+    def __init__(self, app, prefix):
+        self.app = app
+        self.prefix = prefix
+
+    def __call__(self, environ, start_response):
+        environ['SCRIPT_NAME'] = self.prefix
+        path_info = environ['PATH_INFO']
+        if path_info.startswith(self.prefix):
+            environ['PATH_INFO'] = path_info[len(self.prefix):]
+        return self.app(environ, start_response)
+
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/factory')
+
+
+app.config['APPLICATION_ROOT'] = '/factory'
+
 app.config['SECRET_KEY'] = 'your_secret_key'
+
+application = DispatcherMiddleware(Flask('dummy_app'), {
+    '/factory': app
+})
+
 
 # Set up paths
 alias = "factory"
@@ -78,7 +105,7 @@ def remove_user(username):
 def index():
     if not is_root_registered():
         return redirect(url_for('register', role='root'))
-    return redirect(url_for('login'))
+    return redirect(url_for('login', _external=False))
 
 @app.route('/remove_user', methods=['POST'])
 def remove_user_route():
@@ -262,4 +289,4 @@ def fix_user_data():
 fix_user_data()
 
 if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+    run_simple('0.0.0.0', 5000, application, use_reloader=True, use_debugger=True, threaded=True)
