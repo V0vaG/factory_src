@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/factory/static', static_folder='static')
 application = DispatcherMiddleware(Flask('dummy_app'), {
     '/factory': app
 })
