@@ -1,3 +1,7 @@
-from app import app
-if __name__ == "__main__":
-  app.run()
+from app import app  # or whatever your main file is called
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+
+# Mount app under /factory
+application = DispatcherMiddleware(Flask('dummy_app'), {
+    '/factory': app
+})
