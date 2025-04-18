@@ -10,7 +10,21 @@ from werkzeug.serving import run_simple
 
 # Mount app at /factory
 app = Flask(__name__, static_url_path='/factory/static', static_folder='static')
-app.wsgi_app = ProxyFix(app.wsgi_app)
+class PrefixMiddleware(object):
+    def __init__(self, app, prefix):
+        self.app = app
+        self.prefix = prefix
+
+    def __call__(self, environ, start_response):
+        environ['SCRIPT_NAME'] = self.prefix
+        path_info = environ['PATH_INFO']
+        if path_info.startswith(self.prefix):
+            environ['PATH_INFO'] = path_info[len(self.prefix):]
+        return self.app(environ, start_response)
+
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/factory')
+
+
 app.config['APPLICATION_ROOT'] = '/factory'
 
 app.config['SECRET_KEY'] = 'your_secret_key'
