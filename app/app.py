@@ -4,8 +4,17 @@ import os
 import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(__name__)
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.serving import run_simple
+
+# Mount app at /factory
+app = Flask(__name__, static_url_path='/factory/static', static_folder='static')
 app.config['SECRET_KEY'] = 'your_secret_key'
+
+application = DispatcherMiddleware(Flask('dummy_app'), {
+    '/factory': app
+})
+
 
 # Set up paths
 alias = "factory"
@@ -74,7 +83,7 @@ def remove_user(username):
     users[1]["users"] = [user for user in users[1].get("users", []) if user["user"] != username]
     save_users(users)
 
-@app.route('/factory/')
+@app.route('/')
 def index():
     if not is_root_registered():
         return redirect(url_for('register', role='root'))
@@ -118,7 +127,7 @@ def register(role):
                 return redirect(url_for('login'))
     return render_template('register.html', role=role)
 
-@app.route('/factory/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     root_user = get_root_user()
     users = get_users()
@@ -262,4 +271,4 @@ def fix_user_data():
 fix_user_data()
 
 if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+    run_simple('0.0.0.0', 5000, application, use_reloader=True, use_debugger=True, threaded=True)
